@@ -3,9 +3,9 @@ import random
 import sys
 import numpy as np
 
-O = pygame.image.load("D:/승호/프로그래밍/프로젝트/TicTacTo/TicTacTo_socketGame/image/O.png")
+O = pygame.image.load("image/O.png")
 O = pygame.transform.scale(O,(180,180))
-X = pygame.image.load("D:/승호/프로그래밍/프로젝트/TicTacTo/TicTacTo_socketGame/image/X.png")
+X = pygame.image.load("image/X.png")
 X = pygame.transform.scale(X,(180,180))
 # 화면설정
 def init():
