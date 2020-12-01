@@ -1,7 +1,6 @@
 import pygame
 import random
 import sys
-import numpy as np
 
 O = pygame.image.load("image/O.png")
 O = pygame.transform.scale(O,(180,180))
@@ -23,11 +22,10 @@ def init():
     rect8 = Button(screen, 500, 550, 200, 200,line=10, color=BOARD_RECT, shape='rect')
     rect9 = Button(screen, 700, 550, 200, 200,line=10, color=BOARD_RECT, shape='rect')
     # 보드 인덱스 위치
-    rec_li = [[[rect1.x+10,rect1.y+10],[rect2.x+10,rect2.y+10],[rect3.x+10,rect3.y+10]],
+    rec_pos = [[[rect1.x+10,rect1.y+10],[rect2.x+10,rect2.y+10],[rect3.x+10,rect3.y+10]],
               [[rect4.x+10,rect4.y+10],[rect5.x+10,rect5.y+10],[rect6.x+10,rect6.y+10]],
               [[rect7.x+10,rect7.y+10],[rect8.x+10,rect8.y+10],[rect9.x+10,rect9.y+10]]]
-    # 넘파이로 변환
-    rec_pos = np.array(rec_li)
+
 
 # 버튼 클래스
 class Button(object):
@@ -64,9 +62,9 @@ def isClick(button,m_pos):
 # 선택한 위치 행렬에 표시
 def BoardMark(index,user):
     if user == 'O':
-        board_matrix[index]=1
+        board_matrix[index[0]][index[1]]=1
     else:
-        board_matrix[index]=2
+        board_matrix[index[0]][index[1]]=2
 
 # 보드판에 그림 그림
 def BoardDraw(index,user):
@@ -86,7 +84,7 @@ def userTurn(u):
 # 선택한 위치가 비어있는지 확인
 def isBlank(index,u):
     global user
-    if board_matrix[index]==0:
+    if board_matrix[index[0]][index[1]]==0:
         BoardMark(index, u)
         user = userTurn(user)
     else:
@@ -104,7 +102,7 @@ if __name__ == "__main__":
     BOARD = (250, 128, 114)
     BOARD_RECT = (94, 119, 249)
 
-    board_matrix = np.zeros([3,3])
+    board_matrix = [[0 for i in range(3)] for j in range(3)]
     print(board_matrix)
     screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
     user='O'
@@ -150,9 +148,9 @@ if __name__ == "__main__":
                 sys.exit()
         for i,row in enumerate(board_matrix):
             for j,col in enumerate(board_matrix[i]):
-                if board_matrix[i,j]==1:
-                    BoardDraw(rec_pos[i,j],'O')
-                elif board_matrix[i, j]==2:
-                    BoardDraw(rec_pos[i, j],'X')
+                if board_matrix[i][j]==1:
+                    BoardDraw(rec_pos[i][j],'O')
+                elif board_matrix[i][j]==2:
+                    BoardDraw(rec_pos[i][j],'X')
 
         pygame.display.flip()
