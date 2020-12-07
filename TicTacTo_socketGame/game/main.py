@@ -1,11 +1,18 @@
 import pygame
 import random
 import sys
+import socket
+
 
 O = pygame.image.load("image/O.png")
 O = pygame.transform.scale(O,(180,180))
 X = pygame.image.load("image/X.png")
 X = pygame.transform.scale(X,(180,180))
+
+BLACK = (0,      0,      0)
+RED   = (200,    0,      0)
+GREEN = (0,    200,      0)
+
 # 화면설정
 def init():
     global rect1,rect2,rect3,rect4,rect5,rect6,rect7,rect8,rect9,rec_pos
@@ -90,7 +97,43 @@ def isBlank(index,u):
     else:
         print("여기에 둘수 없습니다.")
 
+def isWin(usr,boardMark):
+    print(boardMark)
+    winUser = 'O' if usr=='X' else 'X'
+    for i in range(3):
+        if boardMark[i] == [1,1,1] or boardMark[0] == [2,2,2]:
+            setFont(f"{winUser} WIN!! ","",BLACK,100,screen,(300,300))
+            return False
 
+    for i in range(3):
+        if boardMark[0][i] == 1 and boardMark[1][i] == 1 and boardMark[2][i] == 1:
+            setFont(f"{winUser} WIN!! ", "", BLACK, 100, screen, (300, 300))
+            return False
+
+        if boardMark[0][i] == 2 and boardMark[1][i] == 2 and boardMark[2][i] == 2:
+            setFont(f"{winUser} WIN!! ", "", BLACK, 100, screen, (300, 300))
+            return False
+    if boardMark[0][0] == 1 and boardMark[1][1] == 1 and boardMark[2][2] == 1:
+        setFont(f"{winUser} WIN!! ", "", BLACK, 100, screen, (300, 300))
+
+    if boardMark[0][0] == 2 and boardMark[1][1] == 2 and boardMark[2][2] == 2:
+        setFont(f"{winUser} WIN!! ", "", BLACK, 100, screen, (300, 300))
+
+    if boardMark[0][2] == 1 and boardMark[1][1] == 1 and boardMark[2][0] == 1:
+        setFont(f"{winUser} WIN!! ", "", BLACK, 100, screen, (300, 300))
+
+    if boardMark[0][2] == 2 and boardMark[1][1] == 2 and boardMark[2][0] == 2:
+        setFont(f"{winUser} WIN!! ", "", BLACK, 100, screen, (300, 300))
+    return True
+
+# 폰트
+def setFont(strMsg, varMsg, color, size, su, po=(0,0)):
+    font = pygame.font.Font(None, size)
+    text = font.render(strMsg + str(varMsg), 1, color)
+    su.blit(text, (po[0], po[1]))
+def userTurnShow(usr):
+    color = RED if usr=='X' else GREEN
+    setFont("",usr,color,50,screen,(30,30))
 if __name__ == "__main__":
     pygame.init()
     # screen
@@ -106,6 +149,8 @@ if __name__ == "__main__":
     print(board_matrix)
     screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
     user='O'
+
+    keyEvent = True
     while True:
         # mouse pos
         mousePos = pygame.mouse.get_pos()
@@ -115,33 +160,33 @@ if __name__ == "__main__":
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if isClick(rect1,mousePos):
-                    isBlank((0,0),user)
+                if keyEvent:
+                    if isClick(rect1,mousePos):
+                        isBlank((0,0),user)
 
+                    elif isClick(rect2,mousePos):
+                        isBlank((0, 1), user)
 
-                elif isClick(rect2,mousePos):
-                    isBlank((0, 1), user)
+                    elif isClick(rect3,mousePos):
+                        isBlank((0, 2), user)
 
-                elif isClick(rect3,mousePos):
-                    isBlank((0, 2), user)
+                    elif isClick(rect4,mousePos):
+                        isBlank((1, 0), user)
 
-                elif isClick(rect4,mousePos):
-                    isBlank((1, 0), user)
+                    elif isClick(rect5,mousePos):
+                        isBlank((1, 1), user)
 
-                elif isClick(rect5,mousePos):
-                    isBlank((1, 1), user)
+                    elif isClick(rect6,mousePos):
+                        isBlank((1, 2), user)
 
-                elif isClick(rect6,mousePos):
-                    isBlank((1, 2), user)
+                    elif isClick(rect7,mousePos):
+                        isBlank((2, 0), user)
 
-                elif isClick(rect7,mousePos):
-                    isBlank((2, 0), user)
+                    elif isClick(rect8,mousePos):
+                        isBlank((2, 1), user)
 
-                elif isClick(rect8,mousePos):
-                    isBlank((2, 1), user)
-
-                elif isClick(rect9,mousePos):
-                    isBlank((2, 2),user)
+                    elif isClick(rect9,mousePos):
+                        isBlank((2, 2),user)
          
             if event.type in [pygame.K_ESCAPE,pygame.QUIT]:
                 pygame.quit()
@@ -152,5 +197,7 @@ if __name__ == "__main__":
                     BoardDraw(rec_pos[i][j],'O')
                 elif board_matrix[i][j]==2:
                     BoardDraw(rec_pos[i][j],'X')
-
+        setFont("turn : ", "", BLACK, 50, screen, (0, 0))
+        userTurnShow(user)
+        keyEvent = isWin(user,board_matrix)
         pygame.display.flip()
